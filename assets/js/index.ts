@@ -1,20 +1,20 @@
 import { Room } from "./room";
 
-if (location.pathname.startsWith("/room")) {
-	const room = new Room(
-		window.location.pathname.split("/")[
-			window.location.pathname.split("/").length - 2
-		],
-		window.location.pathname.split("/")[
-			window.location.pathname.split("/").length - 1
-		]
-	);
-	window.addEventListener("DOMContentLoaded", async () => {
-		await room.join();
-	});
+window.addEventListener("phx:page-loading-stop", async (info: any) => {
+	console.log({ info });
+	if (info.detail.kind === "redirect" || info.detail.kind === "initial") {
+		if (location.pathname.startsWith("/room")) {
+			const pathNameParts = window.location.pathname.split("/");
+			const room = new Room(
+				pathNameParts[pathNameParts.length - 2],
+				pathNameParts[pathNameParts.length - 1]
+			);
+			await room.join();
 
-	window.addEventListener("webrtc:connectDisconnect", async () => {
-		if (room.isJoined()) room.leave();
-		else await room.join();
-	});
-}
+			window.addEventListener("webrtc:connectDisconnect", async () => {
+				if (room.isJoined()) room.leave();
+				else await room.join();
+			});
+		}
+	}
+});
