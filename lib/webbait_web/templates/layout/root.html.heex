@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="csrf-token" content={csrf_token_value()}>
+    <%= live_title_tag assigns[:page_title] || "WebBait", suffix: " · Phoenix Framework" %>
+    <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
+    <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
+  </head>
+  <body class="dark:bg-slate-900 dark:text-white grid grid-rows-[56px_calc(100%-56px)]">
+    <header class="p-2 flex gap-2 bg-fuchsia-700 dark:bg-fuchsia-900 text-white shadow-md shadow-gray-400 dark:shadow-slate-700">
+      <p data-tooltip-target="dark-mode-toggle-tooltip" class="p-2 w-[40px] h-[40px] text-center rounded hover:bg-fuchsia-500 dark:hover:bg-fuchsia-700 cursor-pointer" onclick="javascript:toggleDark()" id="darkModeToggle">
+        <i class="fa-solid fa-moon"></i>
+      </p>
+      <div id="dark-mode-toggle-tooltip" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        Toggle Dark Mode
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+      <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+        <%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home), class: "bg-sky-700 hover:bg-sky-600 transition duration-300 p-2 rounded" %>
+      <% end %>
+      <%= render "_user_menu.html", assigns %>
+    </header>
+    <%= @inner_content %>
+  </body>
+</html>

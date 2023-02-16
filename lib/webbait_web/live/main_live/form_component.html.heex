@@ -1,0 +1,27 @@
+<div>
+  <.form
+    let={f}
+    for={@changeset}
+    id="room-form"
+    phx-target={@myself}
+    phx-change="validate"
+    class="flex flex-col gap-4"
+    phx-submit="save">
+
+    <div class="flex flex-col gap-2">
+      <%= label f, :room_id %>
+      <%= text_input f, :room_id, class: "text-black", required: true %>
+      <%= error_tag f, :room_id %>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <%= label f, :display_name %>
+      <%= text_input f, :display_name, class: "text-black", required: true %>
+      <%= error_tag f, :display_name %>
+    </div>
+
+    <div>
+      <%= submit "Join", phx_disable_with: "Joining...", class: "bg-sky-700 hover:bg-sky-900 transition duration-300 p-2 rounded w-full text-white" %>
+    </div>
+  </.form>
+</div>

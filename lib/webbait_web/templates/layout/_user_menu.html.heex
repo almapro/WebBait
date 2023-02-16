@@ -1,0 +1,7 @@
+<%= if @current_user do %>
+  <p class="font-bold p-2 grow"><%= @current_user.username %></p>
+  <%= link "Log out", to: Routes.user_session_path(@conn, :delete), method: :delete, class: "bg-slate-700 hover:bg-slate-600 transition duration-300 p-2 rounded" %>
+<% else %>
+  <p class="grow"></p>
+  <%= link "Log in", to: Routes.user_session_path(@conn, :new), class: "bg-slate-700 hover:bg-slate-600 transition duration-300 p-2 rounded" %>
+<% end %>
