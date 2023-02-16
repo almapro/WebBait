@@ -1,0 +1,61 @@
+<div
+  id="drawer-backdrop"
+  class="fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white w-80 dark:bg-gray-800"
+  tabindex="-1"
+  aria-labelledby="drawer-backdrop-label">
+  <div class="relative w-full h-8 flex flex-row">
+    <div class="grow"></div>
+    <button
+      type="button"
+      data-drawer-hide="drawer-backdrop"
+      aria-controls="drawer-backdrop"
+      class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded text-md w-8 h-8 dark:hover:bg-gray-600 dark:hover:text-white">
+      <i class="fa-solid fa-xmark"></i>
+      <span class="sr-only">Close drawer</span>
+  </button>
+  </div>
+  <div class="py-4 overflow-y-auto">
+    <ul class="space-y-2">
+      <li>
+        <%= link to: Routes.main_index_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
+          <i class="fa-solid fa-house"></i>
+          <span class="ml-3">Dashboard</span>
+        <% end %>
+      </li>
+      <li>
+        <button
+          type="button"
+          class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+          aria-controls="dropdown-users"
+          data-collapse-toggle="dropdown-users">
+          <i class="fa-solid fa-users"></i>
+          <span class="flex-1 ml-3 text-left whitespace-nowrap">Users</span>
+          <i data-collapse-icon class="fa-solid fa-angle-down"></i>
+        </button>
+        <ul id="dropdown-users" class="hidden py-2 space-y-2 bg-black/20 rounded-br rounded-bl">
+          <li>
+            <a
+              href="#"
+              class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+              Users
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+              Groups
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+              Permissions
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
