@@ -62,7 +62,7 @@ if (
     "<i class='fa-solid fa-moon'></i>";
 }
 
-window.toggleDark = function () {
+window.addEventListener("toggleDarkMode", () => {
   if (localStorage.getItem("theme") !== "dark") {
     localStorage.setItem("theme", "dark");
     document.documentElement.classList.add("dark");
@@ -74,4 +74,4 @@ window.toggleDark = function () {
     document.querySelector("#darkModeToggle").innerHTML =
       "<i class='fa-solid fa-moon'></i>";
   }
-};
+});

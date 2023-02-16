@@ -1,5 +1,6 @@
 defmodule WebBaitWeb.LayoutView do
   import Plug.Conn
+  alias Phoenix.LiveView.JS
 
   use WebBaitWeb, :view
 

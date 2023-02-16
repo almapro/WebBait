@@ -12,7 +12,7 @@
   </head>
   <body class="dark:bg-slate-900 dark:text-white grid grid-rows-[56px_calc(100%-56px)]">
     <header class="p-2 flex gap-2 bg-fuchsia-700 dark:bg-fuchsia-900 text-white shadow-md shadow-gray-400 dark:shadow-slate-700">
-      <p data-tooltip-target="dark-mode-toggle-tooltip" class="p-2 w-[40px] h-[40px] text-center rounded hover:bg-fuchsia-500 dark:hover:bg-fuchsia-700 cursor-pointer" onclick="javascript:toggleDark()" id="darkModeToggle">
+      <p data-tooltip-target="dark-mode-toggle-tooltip" class="p-2 w-[40px] h-[40px] text-center rounded hover:bg-fuchsia-500 dark:hover:bg-fuchsia-700 cursor-pointer" phx-click={JS.dispatch("toggleDarkMode")} id="darkModeToggle">
         <i class="fa-solid fa-moon"></i>
       </p>
       <div id="dark-mode-toggle-tooltip" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
