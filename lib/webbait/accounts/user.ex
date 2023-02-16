@@ -4,6 +4,9 @@ defmodule WebBait.Accounts.User do
 
   schema "users" do
     field :username, :string
+    field :firstName, :string
+    field :lastName, :string
+    field :email, :string
     field :type, Ecto.Enum, values: [:admin, :user]
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -30,8 +33,9 @@ defmodule WebBait.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:username, :password, :type])
+    |> cast(attrs, [:username, :firstName, :lastName, :email, :password, :type])
     |> validate_username()
+    |> validate_firstName()
     |> validate_password(opts)
   end
 
@@ -41,6 +45,25 @@ defmodule WebBait.Accounts.User do
     |> validate_length(:username, min: 4)
     |> unsafe_validate_unique(:username, WebBait.Repo)
     |> unique_constraint(:username)
+  end
+
+  defp validate_firstName(changeset) do
+    changeset
+    |> validate_required([:firstName])
+    |> validate_length(:firstName, min: 4)
+  end
+
+  defp validate_lastName(changeset) do
+    changeset
+    |> validate_required([:lastName])
+    |> validate_length(:lastName, min: 4)
+  end
+
+  defp validate_email(changeset) do
+    changeset
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/^(\w+)@([\w.]+)\.([\w.]{2,3})$/, message: "must have the @ sign and no spaces")
+    |> validate_length(:email, max: 160)
   end
 
   defp validate_password(changeset, opts) do
@@ -80,6 +103,51 @@ defmodule WebBait.Accounts.User do
     |> case do
       %{changes: %{username: _}} = changeset -> changeset
       %{} = changeset -> add_error(changeset, :username, "did not change")
+    end
+  end
+
+  @doc """
+  A user changeset for changing the firstName.
+
+  It requires the firstName to change otherwise an error is added.
+  """
+  def firstName_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:firstName])
+    |> validate_firstName()
+    |> case do
+      %{changes: %{firstName: _}} = changeset -> changeset
+      %{} = changeset -> add_error(changeset, :firstName, "did not change")
+    end
+  end
+
+  @doc """
+  A user changeset for changing the lastName.
+
+  It requires the lastName to change otherwise an error is added.
+  """
+  def lastName_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:lastName])
+    |> validate_lastName()
+    |> case do
+      %{changes: %{lastName: _}} = changeset -> changeset
+      %{} = changeset -> add_error(changeset, :lastName, "did not change")
+    end
+  end
+
+  @doc """
+  A user changeset for changing the email.
+
+  It requires the email to change otherwise an error is added.
+  """
+  def email_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email])
+    |> validate_email()
+    |> case do
+      %{changes: %{email: _}} = changeset -> changeset
+      %{} = changeset -> add_error(changeset, :email, "did not change")
     end
   end
 
