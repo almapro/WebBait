@@ -16,7 +16,7 @@ defmodule WebBaitWeb.RoomLive.ConnectionComponent do
           <div class="text-xl font-medium flex flex-col gap-2">
             <%= for {peer_id, %{"name" => name, "connected" => connected}} <- @peers do %>
               <div id={peer_id} class="grid grid-cols-4 grid-cols-[.1fr_.3fr_.3fr_.3fr] gap-4">
-              <p class="my-auto">Peer: <%= name %><%= if (@my_peer_id == peer_id) do %><p>(You)</p><% end %></p>
+              <p class="my-auto">Peer: <%= URI.decode(name) %><%= if (@my_peer_id == peer_id) do %><p>(You)</p><% end %></p>
               <%= if (@my_peer_id != peer_id) do %>
                 <button class="bg-sky-700 p-2 rounded transition duration-300 hover:bg-sky-900 text-white" phx-click="commandPeerToConnectOrDisconnect" phx-value-peer_id={peer_id} phx-target={@myself}>Command to <%= if (connected) do "disconnect" else"connect" end %></button>
                 <button class={"p-2 rounded#{if (connected) do " bg-sky-700 transition duration-300 hover:bg-sky-900 text-white" else " bg-gray-500 cursor-not-allowed" end}"} disabled={!connected} phx-click="toggle-video" phx-value-peer_id={peer_id} phx-target={@myself}>Toggle video</button>
@@ -40,13 +40,13 @@ defmodule WebBaitWeb.RoomLive.ConnectionComponent do
           <div id="videos-grid" class="flex flex-row flex-wrap gap-2 w-full h-full">
             <%= for {peer_id, %{"name" => name} } <- @peers do %>
               <div
-                  id={"feed-#{if (peer_id === @my_peer_id) do "local-peer" else peer_id end}"}
-                  name="video-feed"
-                  class="relative bg-black/30 rounded-md overflow-hidden basis-full md:basis-1/3 w-full h-full aspect-auto md:aspect-video border-gray-500 border">
+                id={"feed-#{if (peer_id === @my_peer_id) do "local-peer" else peer_id end}"}
+                name="video-feed"
+                class="relative bg-black/30 rounded-md overflow-hidden basis-full md:basis-1/2 lg:basis-1/3 w-full h-full aspect-auto md:aspect-video border-gray-500 border">
                 <audio muted={if (peer_id === @my_peer_id) do true else false end} autoplay={true} id={"audio-#{peer_id}"}></audio>
                 <video muted={true} autoplay={true} playsInline={true} id={"video-#{peer_id}"} class="w-full h-full"></video>
                 <div id={"label-#{peer_id}"} name="video-label" class="absolute bottom-0 p-2 bg-gradient-to-t from-black to-transparent text-white w-full text-left">
-                  <%= if (peer_id === @my_peer_id) do "(You)" else name end %>
+                  <%= if (peer_id === @my_peer_id) do "(You)" else URI.decode(name) end %>
                 </div>
               </div>
             <% end %>

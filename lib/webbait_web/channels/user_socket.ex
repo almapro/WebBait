@@ -1,4 +1,5 @@
 defmodule WebBaitWeb.UserSocket do
+  alias WebBait.Accounts
   use Phoenix.Socket
 
   channel "room:*", WebBaitWeb.PeerChannel
@@ -32,9 +33,17 @@ defmodule WebBaitWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
+ 
+  # def connect(_params, socket, _connect_info) do
+  #   {:ok, socket}
+  # end
+ 
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(%{"token" => token} = _params, socket, _connect_info) do
+    {:ok, decoded_token} = Base.decode64(token)
+    user = Accounts.get_user_by_session_token(decoded_token)
+    {:ok,
+      assign(socket, :current_user, user)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

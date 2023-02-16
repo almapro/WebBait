@@ -1,4 +1,6 @@
 defmodule WebBaitWeb.LayoutView do
+  import Plug.Conn
+
   use WebBaitWeb, :view
 
   # Phoenix LiveDashboard is available only in development by default,

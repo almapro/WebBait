@@ -64,11 +64,12 @@ defmodule WebBait.Room do
   end
 
   @impl true
-  def handle_info({:add_peer_channel, peer_channel_pid, peer_id, name, socket}, state) do
+  def handle_info({:add_peer_channel, peer_channel_pid, peer_id, name, username, socket}, state) do
     state =
       put_in(state, [:peer_channels, peer_id], %{
         "peer_channel_pid" => peer_channel_pid,
         "name" => name,
+        "username" => username,
         "socket" => socket,
         "connected" => false,
         "videoSent" => false,
@@ -107,7 +108,7 @@ defmodule WebBait.Room do
   def handle_info(%Message.NewPeer{rtc_engine: rtc_engine, peer: peer}, state) do
     Membrane.Logger.info("New peer: #{inspect(peer)}. Accepting.")
     # get node the peer with peer_id is running on
-    %{"peer_channel_pid" => peer_channel_pid, "name" => name, "socket" => socket} =
+    %{"peer_channel_pid" => peer_channel_pid, "name" => name, "username" => username, "socket" => socket} =
       Map.get(state.peer_channels, peer.id)
 
     peer_node = node(peer_channel_pid)
@@ -150,6 +151,7 @@ defmodule WebBait.Room do
       put_in(state, [:peer_channels, peer.id], %{
         "peer_channel_pid" => peer_channel_pid,
         "name" => name,
+        "username" => username,
         "socket" => socket,
         "connected" => true,
         "videoSent" => false,
@@ -169,13 +171,14 @@ defmodule WebBait.Room do
   def handle_info(%Message.PeerLeft{peer: peer}, state) do
     Membrane.Logger.info("Peer #{inspect(peer.id)} left RTC Engine")
 
-    %{"peer_channel_pid" => peer_channel_pid, "name" => name, "socket" => socket} =
+    %{"peer_channel_pid" => peer_channel_pid, "name" => name, "username" => username, "socket" => socket} =
       Map.get(state.peer_channels, peer.id)
 
     state =
       put_in(state, [:peer_channels, peer.id], %{
         "peer_channel_pid" => peer_channel_pid,
         "name" => name,
+        "username" => username,
         "socket" => socket,
         "connected" => false,
         "videoSent" => false,
@@ -214,6 +217,7 @@ defmodule WebBait.Room do
       %{
         "peer_channel_pid" => peer_channel_pid,
         "name" => name,
+        "username" => username,
         "socket" => socket,
         "connected" => connected,
         "videoSent" => videoSent,
@@ -224,6 +228,7 @@ defmodule WebBait.Room do
         put_in(state, [:peer_channels, from], %{
           "peer_channel_pid" => peer_channel_pid,
           "name" => name,
+        "username" => username,
           "socket" => socket,
           "connected" => connected,
           "videoSent" => video || videoSent,

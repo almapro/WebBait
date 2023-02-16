@@ -38,11 +38,15 @@ export class Room {
   }>();
   private tracksSubjectPeersSubscription: Subscription | undefined = undefined;
 
-  constructor(roomId: string, name: string) {
-    this.socket = new Socket("/socket");
+  constructor(roomId: string) {
+    let token =
+      document.querySelector("meta[name='token']")?.getAttribute("content") ||
+      "";
+    this.socket = new Socket("/socket", {
+      params: { token },
+    });
     this.socket.connect();
-    this.displayName = name;
-    this.webrtcChannel = this.socket.channel(`room:${roomId}`, { name });
+    this.webrtcChannel = this.socket.channel(`room:${roomId}`);
     this.webrtcChannel.join();
 
     this.webrtcChannel.on("connect", async () => {

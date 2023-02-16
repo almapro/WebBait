@@ -52,7 +52,8 @@ defmodule WebBaitWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live "/dashboard", MainLive.Index, :index
-    live "/room/:id/:name", RoomLive.Show, :show
+    live "/settings", SettingsLive.Index, :index
+    live "/room/:id", RoomLive.Show, :show
   end
 
   scope "/", WebBaitWeb do

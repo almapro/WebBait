@@ -5,17 +5,20 @@ defmodule WebBaitWeb.PeerChannel do
   require Membrane.Logger
 
   @impl true
-  def join("room:" <> room_id, %{"name" => name}, socket) do
+  def join("room:" <> room_id, _params, socket) do
+    user = socket.assigns.current_user
+    username = user.username
+    name = "#{user.firstName} #{user.lastName}"
     case :global.whereis_name(room_id) do
       :undefined -> WebBait.Room.start(room_id, name: {:global, room_id})
       pid -> {:ok, pid}
     end
     |> case do
       {:ok, room_pid} ->
-        do_join(socket, name, room_pid, room_id)
+        do_join(socket, name, username, room_pid, room_id)
 
       {:error, {:already_started, room_pid}} ->
-        do_join(socket, name, room_pid, room_id)
+        do_join(socket, name, username, room_pid, room_id)
 
       {:error, reason} ->
         Logger.error("""
@@ -28,18 +31,19 @@ defmodule WebBaitWeb.PeerChannel do
     end
   end
 
-  defp do_join(socket, name, room_pid, room_id) do
+  defp do_join(socket, name, username, room_pid, room_id) do
     peer_id = "#{UUID.uuid4()}"
     # TODO handle crash of room?
     Process.monitor(room_pid)
-    send(room_pid, {:add_peer_channel, self(), peer_id, name, socket})
+    send(room_pid, {:add_peer_channel, self(), peer_id, name, username, socket})
 
     socket =
       Phoenix.Socket.assign(socket, %{
         room_id: room_id,
         room_pid: room_pid,
         peer_id: peer_id,
-        name: name
+        name: name,
+        username: username
       })
 
     {:ok, socket}
@@ -56,7 +60,7 @@ defmodule WebBaitWeb.PeerChannel do
   def handle_in("rejoin", _params, socket) do
     send(
       socket.assigns.room_pid,
-      {:add_peer_channel, self(), socket.assigns.peer_id, socket.assigns.name, socket}
+      {:add_peer_channel, self(), socket.assigns.peer_id, socket.assigns.name, socket.assigns.username, socket}
     )
 
     {:noreply, socket}
@@ -103,7 +107,7 @@ defmodule WebBaitWeb.PeerChannel do
 
   @impl true
   def handle_info({:peers, peers}, socket) do
-    list = Enum.into(peers, %{}, fn {peer_id, _} -> {peer_id, peer_id } end)
+    list = Enum.into(peers, %{}, fn {peer_id, _} -> {peer_id, peer_id} end)
     push(socket, "peers", list)
     {:noreply, socket}
   end
