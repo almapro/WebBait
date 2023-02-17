@@ -17,13 +17,13 @@
   <div class="py-4 overflow-y-auto">
     <ul class="space-y-2">
       <li>
-        <%= live_patch to: Routes.main_index_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
+        <%= live_redirect to: Routes.main_index_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
           <i class="fa-solid fa-house"></i>
           <span class="ml-3">Dashboard</span>
         <% end %>
       </li>
       <li>
-        <%= live_patch to: Routes.users_users_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
+        <%= live_redirect to: Routes.users_users_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
           <i class="fa-solid fa-users"></i>
           <span class="ml-3">Users</span>
         <% end %>
