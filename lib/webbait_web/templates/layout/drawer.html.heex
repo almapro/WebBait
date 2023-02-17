@@ -17,40 +17,16 @@
   <div class="py-4 overflow-y-auto">
     <ul class="space-y-2">
       <li>
-        <%= link to: Routes.main_index_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
+        <%= live_patch to: Routes.main_index_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
           <i class="fa-solid fa-house"></i>
           <span class="ml-3">Dashboard</span>
         <% end %>
       </li>
       <li>
-        <button
-          type="button"
-          class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          aria-controls="dropdown-users"
-          data-collapse-toggle="dropdown-users">
+        <%= live_patch to: Routes.users_users_path(@conn, :index), class: "flex items-center p-2 text-base font-normal text-gray-900 rounded dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700" do %>
           <i class="fa-solid fa-users"></i>
-          <span class="flex-1 ml-3 text-left whitespace-nowrap">Users</span>
-          <i data-collapse-icon class="fa-solid fa-angle-down"></i>
-        </button>
-        <ul id="dropdown-users" class="hidden py-2 space-y-2 bg-black/20 rounded-br rounded-bl">
-          <li>
-            <%= link "Users", to: Routes.users_users_path(@conn, :index), class: "flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" %>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              Groups
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              Permissions
-            </a>
-          </li>
-        </ul>
+          <span class="ml-3">Users</span>
+        <% end %>
       </li>
     </ul>
   </div>
