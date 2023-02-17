@@ -24,8 +24,6 @@ defmodule WebBaitWeb.MainLive.FormComponent do
   end
 
   def handle_event("save", %{"room_peer" => room_peer_params}, socket) do
-    IO.inspect(room_peer_params)
-
     {:noreply,
      socket
      |> push_redirect(to: Routes.room_show_path(socket, :show, room_peer_params["room_id"]))}
