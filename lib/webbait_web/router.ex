@@ -4,17 +4,17 @@ defmodule WebBaitWeb.Router do
   import WebBaitWeb.UserAuth
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {WebBaitWeb.LayoutView, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug :fetch_current_user
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {WebBaitWeb.LayoutView, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(:fetch_current_user)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   # Other scopes may use custom stacks.
@@ -33,32 +33,35 @@ defmodule WebBaitWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/live_dashboard", metrics: WebBaitWeb.Telemetry
+      live_dashboard("/live_dashboard", metrics: WebBaitWeb.Telemetry)
     end
   end
 
   ## Authentication routes
 
   scope "/", WebBaitWeb do
-    pipe_through [:browser, :redirect_if_user_is_authenticated]
+    pipe_through([:browser, :redirect_if_user_is_authenticated])
 
-    get "/", UserSessionController, :new
-    post "/", UserSessionController, :create
+    get("/", UserSessionController, :new)
+    post("/", UserSessionController, :create)
   end
 
   scope "/", WebBaitWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through([:browser, :require_authenticated_user])
 
-    live "/dashboard", MainLive.Index, :index
-    live "/settings", SettingsLive.Index, :index
-    live "/room/:id", RoomLive.Show, :show
+    live("/dashboard", MainLive.Index, :index)
+    live("/settings", SettingsLive.Index, :index)
+    live("/room/:id", RoomLive.Show, :show)
+    live("/users", UsersLive.Users, :index)
+    live("/users/new", UsersLive.Users, :new)
+    live("/users/delete/:id", UsersLive.Users, :delete)
   end
 
   scope "/", WebBaitWeb do
-    pipe_through [:browser]
+    pipe_through([:browser])
 
-    delete "/logout", UserSessionController, :delete
+    delete("/logout", UserSessionController, :delete)
   end
 end

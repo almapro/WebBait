@@ -34,11 +34,7 @@
         </button>
         <ul id="dropdown-users" class="hidden py-2 space-y-2 bg-black/20 rounded-br rounded-bl">
           <li>
-            <a
-              href="#"
-              class="flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              Users
-            </a>
+            <%= link "Users", to: Routes.users_users_path(@conn, :index), class: "flex items-center w-full p-2 text-base font-normal text-gray-900 transition duration-75 rounded pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" %>
           </li>
           <li>
             <a
