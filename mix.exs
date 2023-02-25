@@ -52,6 +52,7 @@ defmodule WebBait.MixProject do
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
       {:membrane_rtc_engine, "~> 0.8.2"},
       {:uuid, "~> 1.1"},
+      {:cors_plug, "~> 3.0"},
     ]
   end
 
