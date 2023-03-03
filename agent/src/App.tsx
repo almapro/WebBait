@@ -179,7 +179,7 @@ function App() {
         const animate = () => {
           ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
           ctx.fillRect(0, 0, canvas.width, canvas.height);
-          if (hue >= 255 || hue <= 0) reverseHue = !reverseHue;
+          if (hue >= 360 || hue <= 0) reverseHue = !reverseHue;
           if (reverseHue) hue -= 5;
           else hue += 5;
           drawParticales();
