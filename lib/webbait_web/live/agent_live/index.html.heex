@@ -1,0 +1,54 @@
+<div class="p-2 flex flex-col gap-2 h-[calc(100vh-56px)]">
+  <div class="flex flex-row gap-2">
+    <.live_component module={SearchComponent} id={:commands} search={@search} />
+  </div>
+
+  <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600 grow">
+    <thead class="bg-gray-100 dark:bg-gray-700">
+      <tr>
+        <th scope="col" class="p-4">#</th>
+        <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Agent Id</th>
+        <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Domain</th>
+        <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">URL</th>
+        <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">First appearence</th>
+        <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Status</th>
+        <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="agents" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+      <%= for agent <- @agents do %>
+        <tr id={"agent-#{agent.id}"} class="hover:bg-gray-100 dark:hover:bg-gray-700">
+          <td class="w-4 p-4"><%= agent.id %></td>
+          <td class="p-4 mr-12 space-x-6 whitespace-nowrap"><%= agent.agentId %></td>
+          <td class="p-4 space-x-2 whitespace-nowrap"><%= agent.domain %></td>
+          <td class="p-4 space-x-2 whitespace-nowrap"><%= agent.url %></td>
+          <td class="p-4 h-10 space-x-2 whitespace-nowrap"><%= Calendar.strftime(agent.inserted_at, "%Y-%m-%d %I:%M:%S %p")  %></td>
+          <td class="p-4 h-10 space-x-2 whitespace-nowrap"><%= nice_print_agent_status(agent.agentId, @agentsOnline) %></td>
+          <td class="w-1 p-4 space-x-2 whitespace-nowrap">
+            <span><%= live_redirect "WebRTC", to: Routes.agent_webrtc_path(@socket, :index, agent), class: "rounded p-2 bg-fuchsia-400 hover:bg-fuchsia-500 dark:text-white dark:bg-fuchsia-700 transition duration-300 dark:hover:bg-fuchsia-900" %></span>
+            <span><%= live_redirect "Commands", to: Routes.agent_commands_path(@socket, :index, agent), class: "rounded p-2 bg-fuchsia-400 hover:bg-fuchsia-500 dark:text-white dark:bg-fuchsia-700 transition duration-300 dark:hover:bg-fuchsia-900" %></span>
+            <span><%= live_redirect "Activities", to: Routes.agent_activities_path(@socket, :index, agent), class: "rounded p-2 bg-fuchsia-400 hover:bg-fuchsia-500 dark:text-white dark:bg-fuchsia-700 transition duration-300 dark:hover:bg-fuchsia-900" %></span>
+            <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: agent.id, data: [confirm: "Are you sure?"], class: "rounded p-2 text-white bg-red-500 transition duration-300 hover:bg-red-700" %></span>
+          </td>
+        </tr>
+      <% end %>
+      <tr class="grow">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="flex flex-row gap-2 rounded bg-gray-200 dark:bg-gray-800 p-2">
+    <div class="fa-solid fa-arrow-left p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900"></div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">1</div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">2</div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">3</div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">4</div>
+    <div class="fa-solid fa-arrow-right p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900"></div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ defmodule WebBaitWeb.UserSocket do
   use Phoenix.Socket
 
   channel "room:*", WebBaitWeb.PeerChannel
+  channel "agent:*", WebBaitWeb.AgentChannel
   # A Socket handler
   #
   # It's possible to control the websocket connection and

@@ -65,7 +65,7 @@ config :webbait, WebBaitWeb.Endpoint,
 config :webbait, WebBaitWeb.Endpoint,
 live_reload: [
   patterns: [
-    ~r"priv/static/.*(js|ts|css|png|jpeg|jpg|gif|svg)$",
+    ~r"priv/static/[^uploads].*(js|ts|css|png|jpeg|jpg|gif|svg)$",
     ~r"priv/gettext/.*(po)$",
     ~r"lib/webbait_web/(live|views)/.*(ex)$",
     ~r"lib/webbait_web/templates/.*(eex)$"

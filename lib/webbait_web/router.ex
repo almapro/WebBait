@@ -18,9 +18,11 @@ defmodule WebBaitWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", WebBaitWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", WebBaitWeb do
+    pipe_through :api
+    post "/agents", AgentController, :create
+    post "/agents/token", AgentController, :token
+  end
 
   # Enables LiveDashboard only for development
   #
@@ -53,10 +55,14 @@ defmodule WebBaitWeb.Router do
 
     live("/dashboard", MainLive.Index, :index)
     live("/settings", SettingsLive.Index, :index)
-    live("/room/:id", RoomLive.Show, :show)
     live("/users", UsersLive.Users, :index)
     live("/users/new", UsersLive.Users, :new)
     live("/users/delete/:id", UsersLive.Users, :delete)
+    live "/agents", AgentLive.Index, :index
+    live "/agents/:id", AgentLive.Webrtc, :index
+    live "/agents/:id/theater", AgentLive.Webrtc, :theater
+    live "/agents/:id/commands", AgentLive.Commands, :index
+    live "/agents/:id/activities", AgentLive.Activities, :index
   end
 
   scope "/", WebBaitWeb do

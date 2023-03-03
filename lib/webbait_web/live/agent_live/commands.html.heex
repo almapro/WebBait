@@ -1,0 +1,52 @@
+<div class="p-2 flex flex-col gap-2 h-[calc(100vh-56px)]">
+  <div class="flex flex-row gap-2">
+    <%= live_redirect to: Routes.agent_index_path(@socket, :index), class: "flex justify-center gap-2 rounded p-2 px-4 bg-gray-200 hover:bg-gray-300 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-800" do %>
+      <i class="fa-solid fa-arrow-left m-auto"></i>
+      Back
+    <% end %>
+    <.live_component module={SearchComponent} id={:commands_search} search={@search} />
+    <.live_component module={OnlineStatusComponent} id={:commands_agent_info} agent={@agent} online={@online} count={@count} />
+  </div>
+
+  <table class="min-w-full h-fit divide-y divide-gray-200 table-fixed dark:divide-gray-600 grow bg-white dark:bg-gray-800">
+    <thead class="flex flex-row bg-gray-100 dark:bg-gray-700">
+      <tr class="grow flex flex-row">
+        <th scope="col" class="flex-none p-4">#</th>
+        <th scope="col" class="w-2/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Command ID</th>
+        <th scope="col" class="w-1/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Command</th>
+        <th scope="col" class="w-1/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Sent At</th>
+        <th scope="col" class="w-1/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Received?</th>
+        <th scope="col" class="w-1/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Received At</th>
+        <th scope="col" class="w-1/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Result</th>
+        <th scope="col" class="w-1/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Executed At</th>
+        <th scope="col" class="w-1/6 my-auto p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="commands" class="flex flex-col bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+      <%= for command <- @commands do %>
+        <tr id={"command-#{command.id}"} class="flex flex-row hover:bg-gray-100 dark:hover:bg-gray-700">
+          <td class="flex-none w-4 p-4"><%= command.id %></td>
+          <td class="w-2/6 text-left my-auto p-4 space-x-6 whitespace-nowrap"><%= command.cmdId %></td>
+          <td class="w-1/6 text-left my-auto p-4 space-x-2 whitespace-nowrap"><%= nice_print_command(command.cmd, @socket, @agent) %></td>
+          <td class="w-1/6 text-left my-auto p-4 space-x-2 whitespace-nowrap"><%= Calendar.strftime(command.inserted_at, "%Y-%m-%d %I:%M:%S %p") %></td>
+          <td class="w-1/6 text-left my-auto p-4 space-x-6 whitespace-nowrap"><%= command.received %></td>
+          <td class="w-1/6 text-left my-auto p-4 space-x-2 whitespace-nowrap"><%= if command.received, do: Calendar.strftime(command.updated_at, "%Y-%m-%d %I:%M:%S %p") , else: "(Not yet received)" %></td>
+          <td class="w-1/6 text-left my-auto p-4 space-x-2 whitespace-nowrap"><%= if command.result, do: nice_print_result(command.result.result), else: "(No result yet)" %></td>
+          <td class="w-1/6 text-left my-auto p-4 space-x-2 whitespace-nowrap"><%= if command.result, do: Calendar.strftime(command.result.inserted_at, "%Y-%m-%d %I:%M:%S %p"), else: "(Empty)" %></td>
+          <td class="w-1/6 text-left my-auto p-4 space-x-2 whitespace-nowrap">
+            <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: command.id, data: [confirm: "Are you sure?"], class: "rounded p-2 text-white bg-red-500 transition duration-300 hover:bg-red-700" %></span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <div class="flex flex-row gap-2 rounded bg-gray-200 dark:bg-gray-800 p-2">
+    <div class="fa-solid fa-arrow-left p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900"></div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">1</div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">2</div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">3</div>
+    <div class="leading-none p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900">4</div>
+    <div class="fa-solid fa-arrow-right p-4 rounded cursor-pointer bg-gray-400 hover:bg-gray-500 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-900"></div>
+  </div>
+</div>
+

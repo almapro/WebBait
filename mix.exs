@@ -50,7 +50,11 @@ defmodule WebBait.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev},
-      {:membrane_rtc_engine, "~> 0.8.2"},
+      # {:membrane_rtc_engine, "~> 0.8.2"},
+      {:membrane_core, github: "membraneframework/membrane_core", branch: "use-push-flow", override: true},
+      {:membrane_rtc_engine, "~> 0.10.2", override: true},
+      {:membrane_rtp_plugin, github: "membraneframework/membrane_rtp_plugin", branch: "feature/outbound-retransmissions", override: true},
+      {:membrane_rtc_engine_timescaledb, "~> 0.1.0", runtime: false},
       {:uuid, "~> 1.1"},
       {:cors_plug, "~> 3.0"},
     ]

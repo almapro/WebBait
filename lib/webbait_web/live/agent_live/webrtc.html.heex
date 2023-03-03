@@ -1,0 +1,119 @@
+<div id="webrtcControl" data-agent_id={@agent.agentId} data-pinned_source_id={@pinnedSource} data-pinned_source_kind={pinnedSouceKind(@pinnedSource, @devices)} phx-hook="webrtcControl" class="p-2 flex flex-col gap-2 h-[calc(100vh-4.5rem)] w-[calc(100vw-0.25rem)]">
+  <div class="flex flex-row gap-2">
+    <%= live_redirect to: Routes.agent_index_path(@socket, :index), class: "flex justify-center gap-2 rounded p-2 px-4 bg-gray-200 hover:bg-gray-300 dark:text-white dark:bg-gray-700 transition duration-300 dark:hover:bg-gray-800" do %>
+      <i class="fa-solid fa-arrow-left m-auto"></i>
+      Back
+    <% end %>
+    <button id="getDevicesBtn" class="flex rounded p-2 px-4 text-white bg-fuchsia-800 hover:bg-fuchsia-900 transition duration-300 border-0 focus:border-0 focus:outline-none focus:ring-0">
+      Get devices
+    </button>
+    <%= live_patch to: Routes.agent_webrtc_path(@socket, :theater, @agent.id), class: "flex rounded p-2 px-4 text-white bg-fuchsia-800 hover:bg-fuchsia-900 transition duration-300 border-0 focus:border-0 focus:outline-none focus:ring-0" do %>
+      <i class="fa-solid fa-masks-theater my-auto mr-2"></i>
+      <div class="grow text-left my-auto">Theater mode</div>
+    <% end %>
+    <.live_component module={OnlineStatusComponent} id={:webrtc_agent_info} agent={@agent} online={@online} count={@count} />
+  </div>
+  <div class="flex flex-row divide-x-2 divide-gray-500 rounded border-2 border-gray-500 h-full w-full overflow-hidden">
+    <div class="grow flex flex-col divide-y-2 divide-gray-500 h-full w-3/4">
+      <div class="p-2 flex flex-col h-full aspect-w-16 aspect-h-9">
+        <img id="mainImagesDisplay" class={"#{if @pinnedSource != "screenshot", do: "hidden"} m-auto h-full"} src="" alt="Main images display" />
+        <video muted autoplay id="mainVideoDisplay" class={"#{if Enum.find_value(@devices, fn device -> if device["deviceId"] == @pinnedSource and device["kind"] == "videoinput", do: device["kind"] end) == nil and @pinnedSource != "screenshare", do: "hidden"} m-auto"} />
+          <div class={"#{if Enum.find_value(@devices, fn device -> if device["deviceId"] == @pinnedSource and device["kind"] == "audioinput", do: device["kind"] end) == nil, do: "hidden"} w-full h-full"}>
+            <canvas id="mainAudioDisplay-canvas"></canvas>
+            <audio autoplay id="mainAudioDisplay" class="hidden" />
+          </div>
+      </div>
+    </div>
+    <div class="w-1/4 h-full flex flex-col divide-y-2 divide-gray-500">
+      <div class="p-2 h-fit flex flex-col gap-2">
+        <div class="font-bold">Avialable sources</div>
+        <select id="sourcesSelect" class="rounded border border-gray-400 hover:border-gray-500 dark:border-gray-700 dark:bg-gray-700 focus:ring-gray-500 dark:hover:border-gray-600 dark:text-white focus:border-0 focus:outline-none focus:ring-1">
+          <option selected>Choose a source to activate</option>
+          <%= if "screenshare" not in @activeSources do %>
+            <option value="screenshare">Screenshare</option>
+          <% end %>
+          <%= for device <- Enum.filter(@devices, fn %{"kind" => kind} -> kind == "audioinput" or kind == "videoinput" end) do %>
+            <%= if device["deviceId"] not in @activeSources do %>
+              <option value={device["deviceId"]}><%= nice_print_device(device) %></option>
+            <% end %>
+          <% end %>
+        </select>
+        <button id="activateSource" class="flex rounded p-2 px-4 text-white bg-fuchsia-800 hover:bg-fuchsia-900 transition duration-300 border-0 focus:border-0 focus:outline-none focus:ring-0">
+          Activate source
+        </button>
+      </div>
+      <div class="p-2 w-full h-full grow flex flex-col gap-2 overflow-auto scrollbar-hide">
+        <div class="font-bold h-8">Active sources</div>
+        <div class="grow flex flex-col gap-2 w-full h-full overflow-auto scrollbar-hide scroll-p-8">
+          <div class="p-1 flex relative rounded border-2 border-gray-400 w-full h-[30vh]">
+            <div
+              id="pinScreenshotBtn"
+              phx-click="pin-source"
+              phx-value-sourceid="screenshot"
+              class={"absolute w-6 h-6 left-2 top-2 z-20 cursor-pointer flex rounded-full #{if @pinnedSource === "screenshot", do: "!bg-red-500", else: "bg-gray-400" } text-white hover:bg-gray-500"}>
+              <i class="fa-solid fa-thumbtack m-auto"></i>
+            </div>
+            <div id="pinScreenshotBtnTooltip" class="absolute z-20 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+              Pin to main view
+              <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <div id="lastScreenshotBtn" class="absolute w-6 h-6 left-10 top-2 z-20 cursor-pointer flex rounded-full bg-gray-400 text-white hover:bg-gray-500"><i class="fa-solid fa-clock-rotate-left m-auto"></i></div>
+            <div id="lastScreenshotBtnTooltip" class="absolute z-20 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+              Get the last screenshot received
+              <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <div id="sendScreenshotBtn" class="absolute w-6 h-6 left-16 z-20 ml-2 top-2 cursor-pointer flex rounded-full bg-gray-400 text-white hover:bg-gray-500"><i class="fa-solid fa-camera m-auto"></i></div>
+            <div id="sendScreenshotBtnTooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+              Request a screenshot
+              <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <img id="screenshot" class="m-auto w-full h-full hidden" src="" alt="Screenshot">
+            <div class="absolute z-10 top-0 w-full h-fit flex flex-row justify-center text-sm text-center">
+              <div class="bg-fuchsia-800/70 rounded-b-lg p-2">Screenshot</div>
+            </div>
+          </div>
+          <%= for sourceId <- @activeSources do %>
+            <div class="p-1 flex relative rounded border-2 border-gray-400 w-full h-[30vh]">
+              <div
+                id={"pin-#{sourceId}"}
+                phx-click="pin-source"
+                phx-value-sourceid={sourceId}
+                class={"absolute w-6 h-6 left-2 top-2 z-20 cursor-pointer flex rounded-full #{ if @pinnedSource == sourceId, do: "!bg-red-500", else: "bg-gray-400" } text-white hover:bg-gray-500"}>
+                <i class="fa-solid fa-thumbtack m-auto"></i>
+              </div>
+              <div id={"pin-#{sourceId}-tooltip"} class="absolute z-20 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                Pin to main view
+                <div class="tooltip-arrow" data-popper-arrow></div>
+              </div>
+              <div id={"deactivate-#{sourceId}"} class="z-20 absolute w-6 h-6 right-2 top-2 cursor-pointer flex rounded-full bg-gray-400 text-white hover:bg-gray-500"><i class="fa-solid fa-xmark m-auto"></i></div>
+              <div id={"deactivate-#{sourceId}-tooltip"} class="absolute z-20 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                Deactivate source
+                <div class="tooltip-arrow" data-popper-arrow></div>
+              </div>
+              <%= if Enum.find_value(@devices, fn device -> if device["deviceId"] == sourceId, do: device["kind"] end) == "videoinput" or sourceId == "screenshare" do %>
+                <video id={sourceId} class="m-auto w-full h-full" autoPlay muted playsInline />
+              <% else %>
+                <div class="w-full h-full">
+                  <canvas id={"#{sourceId}-canvas"}></canvas>
+                  <audio id={sourceId} class="hidden" autoPlay />
+                </div>
+              <% end %>
+              <div class="absolute z-10 top-0 w-full h-fit flex flex-row justify-center text-sm text-center">
+                <div class="bg-fuchsia-800/70 rounded-b-lg p-2"><%= if sourceId == "screenshare", do: "Screenshare", else: Enum.find_value(@devices, fn device -> if device["deviceId"] == sourceId, do: device["label"] end) %></div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= if @live_action == :theater do %>
+    <.modal title={~H"""
+    <i class="fa-solid fa-masks-theater my-auto mr-2"></i>
+    <div class="grow text-left">Theater mode</div>
+    """} return_to={Routes.agent_webrtc_path(@socket, :index, @agent.id)}>
+      <.live_component module={TheaterModeComponent} id={:theater_mode} />
+    </.modal>
+  <% end %>
+</div>
